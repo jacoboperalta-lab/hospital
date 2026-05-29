@@ -3,12 +3,21 @@ import pg from "pg";
 
 const { Pool } = pg;
 const app = express();
+const connectionString = process.env.POSTGRES_URL || process.env.DATABASE_URL;
 const pool = new Pool({
-  connectionString: process.env.POSTGRES_URL || process.env.DATABASE_URL,
+  connectionString,
   ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : undefined
 });
 
 app.use(express.json({ limit: "2mb" }));
+app.use((req, res, next) => {
+  if (!connectionString) {
+    return res.status(500).json({
+      error: "No hay DATABASE_URL/POSTGRES_URL configurada en Vercel. Conecta una base de datos Postgres al proyecto o añade la variable de entorno."
+    });
+  }
+  next();
+});
 
 const like = (value) => `%${String(value || "").trim()}%`;
 const today = () => new Date().toISOString().slice(0, 10);

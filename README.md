@@ -6,6 +6,18 @@ Use this folder as the Vercel project root when deploying with a hosted Postgres
 
 In Vercel, add a Postgres provider from Marketplace, for example Neon. Vercel will inject `DATABASE_URL` or `POSTGRES_URL` into the project environment.
 
+If you already have a Postgres database, add its connection string manually in Vercel:
+
+```text
+Project Settings -> Environment Variables -> DATABASE_URL
+```
+
+Use the provider connection string, not `localhost`. It usually looks like:
+
+```text
+postgresql://USER:PASSWORD@HOST/DATABASE?sslmode=require
+```
+
 ## 2. Import the migrated data
 
 Run these files against the Postgres database in order:
